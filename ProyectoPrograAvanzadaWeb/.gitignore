@@ -1,0 +1,84 @@
+# Archivos de sistema
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Configuración de paquetes y dependencias
+packages/
+*.nupkg
+*.snupkg
+*.nuspec
+*.dll
+*.exe
+
+# Archivos de usuario de Visual Studio
+.vs/
+.vscode/
+.vscode/*
+
+# Configuración de Visual Studio Code
+.vscode/*
+
+# Archivos de proyecto y configuración generados automáticamente
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+*.pdb
+
+# Archivos de base de datos local
+*.mdf
+*.ldf
+
+# Archivos generados automáticamente por .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Archivos de configuración de entidad y migración de Entity Framework
+Migrations/
+
+# Archivos de caché y temporales
+[Tt]humbs.db
+[Dd]esktop.ini
+*.bak
+*.swp
+*.tmp
+~$*
+*.tmp
+
+# Configuración de configuración local
+*.psess
+*.dotSettings.user
+
+# Archivos de configuración de Rider
+.idea/
+*.idea/
+
+# Configuración de Rider de JetBrains
+.idea/
+.idea/*
+
+# Archivos de publicación y empaquetado
+publish/
+out/
+
+# Archivos de Azure y otros servicios en la nube
+azds.yaml
+azure-pipelines.yml
+docs/*
+
+# Archivos de configuración de testing
+test_results/
+TestResults/
+*.trx
+*.coverage
