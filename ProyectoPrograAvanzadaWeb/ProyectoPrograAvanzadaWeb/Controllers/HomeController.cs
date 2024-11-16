@@ -1,32 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoPrograAvanzadaWeb.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ProyectoPrograAvanzadaWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
+        [Authorize]
         public IActionResult Index()
         {
+            if (User.IsInRole("Admin"))
+            {
+                ViewData["Message"] = "Bienvenido Administrador";
+            }
+            else if (User.IsInRole("User"))
+            {
+                ViewData["Message"] = "Bienvenido Usuario";
+            }
+            else
+            {
+                ViewData["Message"] = "Bienvenido Invitado";
+            }
             return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
+
