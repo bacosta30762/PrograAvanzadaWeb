@@ -1,0 +1,35 @@
+﻿@model Vuelo
+
+<h1>Detalle del Vuelo</h1>
+
+<div>
+    <h2>Información General</h2>
+    <p><strong>Fecha:</strong> @Model.FlightDate</p>
+    <p><strong>Estado:</strong> @Model.FlightStatus</p>
+</div>
+
+<div>
+    <h2>Salida</h2>
+    <p><strong>Aeropuerto:</strong> @Model.Departure.Airport</p>
+    <p><strong>Código IATA:</strong> @Model.Departure.Iata</p>
+    <p><strong>Horario Programado:</strong> @Model.Departure.Scheduled</p>
+    <p><strong>Terminal:</strong> @(string.IsNullOrEmpty(Model.Departure.Terminal) ? "N/A" : Model.Departure.Terminal)</p>
+    <p><strong>Puerta:</strong> @(string.IsNullOrEmpty(Model.Departure.Gate) ? "N/A" : Model.Departure.Gate)</p>
+</div>
+
+<div>
+    <h2>Llegada</h2>
+    <p><strong>Aeropuerto:</strong> @Model.Arrival.Airport</p>
+    <p><strong>Código IATA:</strong> @Model.Arrival.Iata</p>
+    <p><strong>Horario Programado:</strong> @Model.Arrival.Scheduled</p>
+    <p><strong>Terminal:</strong> @(string.IsNullOrEmpty(Model.Arrival.Terminal) ? "N/A" : Model.Arrival.Terminal)</p>
+    <p><strong>Puerta:</strong> @(string.IsNullOrEmpty(Model.Arrival.Gate) ? "N/A" : Model.Arrival.Gate)</p>
+</div>
+
+<div>
+    <h2>Aerolínea</h2>
+    <p><strong>Nombre:</strong> @Model.Airline.Name</p>
+    <p><strong>Código IATA:</strong> @Model.Airline.Iata</p>
+</div>
+
+<a href="@Url.Action("Index", "Vuelos")">Volver a la lista de vuelos</a>

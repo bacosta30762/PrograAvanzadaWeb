@@ -5,18 +5,18 @@ using ProyectoPrograAvanzadaWeb.Seeder;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<FlightService>();
 builder.Services.AddDbContext<PrograContext>(op =>
     op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configurar Identity para usar los modelos de Usuario y Role
 builder.Services.AddIdentity<Usuario, Role>(options =>
 {
     options.User.RequireUniqueEmail = true;
 })
     .AddEntityFrameworkStores<PrograContext>()
     .AddDefaultTokenProviders();
+
 
 var app = builder.Build();
 

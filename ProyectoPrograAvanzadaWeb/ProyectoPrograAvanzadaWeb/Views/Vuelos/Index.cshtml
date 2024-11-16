@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Vuelo>
+@{
+    var pagination = ViewData["Pagination"] as Pagination;
+}
+
+<h1>Consulta de Vuelos</h1>
+
+<form method="get">
+    <input type="text" name="origen" placeholder="Código IATA Origen" />
+    <input type="text" name="destino" placeholder="Código IATA Destino" />
+    <input type="text" name="aerolinea" placeholder="Aerolínea" />
+    <select name="estado">
+        <option value="">Todos</option>
+        <option value="scheduled">Programado</option>
+        <option value="active">En vuelo</option>
+        <option value="landed">Aterrizado</option>
+        <option value="cancelled">Cancelado</option>
+    </select>
+    <button type="submit">Buscar</button>
+</form>
+
+@if (Model.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Aerolínea</th>
+                <th>Estado</th>
+                <th>Horario de Salida</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vuelo in Model)
+            {
+                <tr>
+                    <td>@vuelo.Departure.Iata</td>
+                    <td>@vuelo.Arrival.Iata</td>
+                    <td>@vuelo.Airline.Name</td>
+                    <td>@vuelo.FlightStatus</td>
+                    <td>@vuelo.Departure.Scheduled</td>
+                    <td><a href="@Url.Action("Detalle", "Vuelos", new { numeroVuelo = vuelo.Flight.Number })">Ver Detalles</a></td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <p>Mostrando @pagination.Count de @pagination.Total vuelos.</p>
+}
+else
+{
+    <p>No se encontraron vuelos.</p>
+}
