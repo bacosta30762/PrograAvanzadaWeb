@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProyectoPrograAvanzadaWeb.Models;
 using ProyectoPrograAvanzadaWeb.Seeder;
+using ProyectoPrograAvanzadaWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<FlightService>();
+builder.Services.AddTransient<IEnviadorCorreos, EnviadorCorreos>();
 builder.Services.AddDbContext<PrograContext>(op =>
     op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

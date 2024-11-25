@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoPrograAvanzadaWeb.Models;
+using ProyectoPrograAvanzadaWeb.Services;
 using ProyectoPrograAvanzadaWeb.ViewModel;
 
 namespace ProyectoPrograAvanzadaWeb.Controllers
@@ -9,11 +10,13 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
     {
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
+        private readonly IEnviadorCorreos _enviadorCorreos;
 
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
+        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IEnviadorCorreos enviadorCorreos)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _enviadorCorreos = enviadorCorreos;
         }
 
         [HttpGet]
@@ -98,6 +101,81 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Usuario");
+        }
+
+        [HttpGet]
+        public IActionResult RecuperarPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecuperarPassword(RecuperarPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var usuario = await _userManager.FindByEmailAsync(model.Correo);
+                if (usuario != null)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+                    var link = Url.Action("RestablecerPassword", "Usuario",
+                        new { token, correo = usuario.Email }, Request.Scheme);
+
+                    await _enviadorCorreos.SendEmailAsync(usuario.Email,
+                        "Recuperación de contraseña",
+                        $"Haga clic en el siguiente enlace para restablecer su contraseña: <a href='{link}'>Restablecer contraseña</a>");
+
+                    TempData["Mensaje"] = "Se ha enviado un correo para restablecer la contraseña.";
+                    return RedirectToAction("Login");
+                }
+
+                ModelState.AddModelError(string.Empty, "El correo no está registrado.");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult RestablecerPassword(string token, string correo)
+        {
+            if (token == null || correo == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var model = new RestablecerPasswordViewModel { Token = token, Correo = correo };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestablecerPassword(RestablecerPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var usuario = await _userManager.FindByEmailAsync(model.Correo);
+                if (usuario != null)
+                {
+                    var resultado = await _userManager.ResetPasswordAsync(usuario, model.Token, model.NuevaPassword);
+                    if (resultado.Succeeded)
+                    {
+                        TempData["Mensaje"] = "La contraseña se ha restablecido correctamente.";
+                        return RedirectToAction("Login");
+                    }
+
+                    foreach (var error in resultado.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "El correo no está registrado.");
+                }
+            }
+
+            return View(model);
         }
     }
 }
