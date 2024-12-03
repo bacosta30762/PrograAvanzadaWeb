@@ -8,15 +8,13 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
 {
     public class UsuarioController : Controller
     {
-        private readonly UserManager<Usuario> _userManager;
+        private readonly IUsuarioService _usuarioService;
         private readonly SignInManager<Usuario> _signInManager;
-        private readonly IEnviadorCorreos _enviadorCorreos;
 
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IEnviadorCorreos enviadorCorreos)
+        public UsuarioController(IUsuarioService usuarioService, SignInManager<Usuario> signInManager)
         {
-            _userManager = userManager;
+            _usuarioService = usuarioService;
             _signInManager = signInManager;
-            _enviadorCorreos = enviadorCorreos;
         }
 
         [HttpGet]
@@ -31,30 +29,13 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new Usuario
+                var result = await _usuarioService.RegistrarUsuario(model);
+                if (result == "Success")
                 {
-                    Cedula = model.Cedula,
-                    Nombre = model.Nombre,
-                    Apellidos = model.Apellidos,
-                    UserName = model.Email,
-                    Email = model.Email,
-                    Activo = true
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, "User");
                     return RedirectToAction("Login", "Usuario");
                 }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                ModelState.AddModelError(string.Empty, result);
             }
-
             return View(model);
         }
 
@@ -70,22 +51,19 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-
-                if (result.Succeeded)
+                var result = await _usuarioService.LoginUsuario(model);
+                if (result == "Success")
                 {
                     return RedirectToAction("Index", "Home");
                 }
-                if (result.IsLockedOut)
+
+                if (result == "LockedOut")
                 {
                     return RedirectToAction("Lockout");
                 }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                }
-            }
 
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            }
             return View(model);
         }
 
@@ -115,24 +93,15 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var usuario = await _userManager.FindByEmailAsync(model.Correo);
-                if (usuario != null)
+                var result = await _usuarioService.RecuperarPassword(model);
+                if (result == "CorreoEnviado")
                 {
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
-                    var link = Url.Action("RestablecerPassword", "Usuario",
-                        new { token, correo = usuario.Email }, Request.Scheme);
-
-                    await _enviadorCorreos.SendEmailAsync(usuario.Email,
-                        "Recuperación de contraseña",
-                        $"Haga clic en el siguiente enlace para restablecer su contraseña: <a href='{link}'>Restablecer contraseña</a>");
-
                     TempData["Mensaje"] = "Se ha enviado un correo para restablecer la contraseña.";
                     return RedirectToAction("Login");
                 }
 
-                ModelState.AddModelError(string.Empty, "El correo no está registrado.");
+                ModelState.AddModelError(string.Empty, result);
             }
-
             return View(model);
         }
 
@@ -154,27 +123,15 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var usuario = await _userManager.FindByEmailAsync(model.Correo);
-                if (usuario != null)
+                var result = await _usuarioService.RestablecerPassword(model);
+                if (result == "Success")
                 {
-                    var resultado = await _userManager.ResetPasswordAsync(usuario, model.Token, model.NuevaPassword);
-                    if (resultado.Succeeded)
-                    {
-                        TempData["Mensaje"] = "La contraseña se ha restablecido correctamente.";
-                        return RedirectToAction("Login");
-                    }
+                    TempData["Mensaje"] = "La contraseña se ha restablecido correctamente.";
+                    return RedirectToAction("Login");
+                }
 
-                    foreach (var error in resultado.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "El correo no está registrado.");
-                }
+                ModelState.AddModelError(string.Empty, result);
             }
-
             return View(model);
         }
     }

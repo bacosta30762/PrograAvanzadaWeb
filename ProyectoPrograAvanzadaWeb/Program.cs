@@ -1,14 +1,20 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoPrograAvanzadaWeb.Models;
 using ProyectoPrograAvanzadaWeb.Seeder;
 using ProyectoPrograAvanzadaWeb.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<FlightService>();
 builder.Services.AddTransient<IEnviadorCorreos, EnviadorCorreos>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 builder.Services.AddDbContext<PrograContext>(op =>
     op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -18,6 +24,7 @@ builder.Services.AddIdentity<Usuario, Role>(options =>
 })
     .AddEntityFrameworkStores<PrograContext>()
     .AddDefaultTokenProviders();
+
 
 
 var app = builder.Build();
