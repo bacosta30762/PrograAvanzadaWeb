@@ -1,4 +1,115 @@
-﻿<!-- Spinner Start -->
+﻿<style>
+    .paste-button {
+        position: relative;
+        display: block;
+    }
+
+    .button {
+        background-color: rgba(0, 0, 0, 0);
+        color: #d5d8dc;
+        font-size: 15px;
+        font-weight: bold;
+        border: 0px solid transparent;
+        cursor: pointer;
+    }
+
+        .button:hover {
+            color: white;
+        }
+
+        .button:focus {
+            color: white;
+            border-color: blue;
+            outline: none;
+        }
+
+    .dropdown-content {
+        display: none;
+        left: 50%;
+        font-size: 14px;
+        position: absolute;
+        z-index: 1;
+        min-width: 500px; 
+        max-width: 100%; 
+        background-color: #ffffff;
+        border: 2px solid #17a689;
+        border-radius: 15px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+
+
+        .dropdown-content a {
+            color: #37474f;
+            padding: 8px 10px;
+            text-decoration: none;
+            display: block;
+            transition: 0.1s;
+        }
+
+            .dropdown-content a:hover {
+                background-color: #17a689;
+                color: #212121;
+            }
+
+            .dropdown-content a:focus {
+                background-color: #17a689;
+                color: #212121;
+            }
+
+        .dropdown-content #top:hover {
+            border-radius: 11px 11px 0px 0px;
+        }
+
+        .dropdown-content #bottom:hover {
+            border-radius: 0px 0px 11px 11px;
+        }
+
+    .paste-button:hover button {
+        border: 0px solid transparent;
+    }
+
+    .paste-button:focus {
+        border: 0px solid transparent;
+    }
+
+    .paste-button:hover .dropdown-content {
+        display: block;
+        border: 0px solid transparent;
+        left: 50%; 
+        transform: translateX(-50%); 
+        text-align: left !important;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        color: red;
+    }
+
+    .paste-button {
+        position: relative;
+        display: inline-block;
+    }
+
+    #notificationDropdown {
+        position: absolute; 
+        top: 50px; 
+        right: 10px; 
+        left: 10px; 
+        z-index: 9999; 
+    }
+
+</style>
+
+
+
+<!-- Spinner Start -->
 <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
     <div class="spinner-border text-secondary" style="width: 3rem; height: 3rem;" role="status">
         <span class="sr-only">Loading...</span>
@@ -12,6 +123,7 @@
             <div class="d-flex">
                 <a href="#" class="text-muted me-4"><i class="fas fa-envelope text-secondary me-2"></i>Example@gmail.com</a>
                 <a href="#" class="text-muted me-0"><i class="fas fa-phone-alt text-secondary me-2"></i>+01234567890</a>
+
             </div>
         </div>
         <div class="col-lg-3 row-cols-1 text-center mb-2 mb-lg-0">
@@ -37,6 +149,32 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto py-0">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-link nav-link dropdown-toggle"
+                                id="notificationDropdownButton"
+                                data-toggle="dropdown"
+                                aria-expanded="false"
+                                aria-label="Notificaciones"
+                        >
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="notification-badge badge badge-danger"
+                                  id="notificationBadge"
+                                  style="display: none;">0</span>
+                        </button>
+
+                        <div class="dropdown-menu dropdown-menu-right" style="background-color: #3E5871; border-bottom-left-radius: 10px;border-bottom-right-radius: 10px; padding: 10px"
+                             id="notificationDropdown"
+                             aria-labelledby="notificationDropdownButton">
+
+                            
+
+                            <!-- Aqui se van agrgando las notificaciones -->
+
+                        </div>
+                    </li>
+                }
                 <li class="nav-item">
                     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                 </li>
@@ -46,6 +184,7 @@
 
                 @if (User.Identity.IsAuthenticated)
                 {
+                    
                     <li class="nav-item">
                         <form asp-controller="Usuario" asp-action="Logout" method="post" class="form-inline">
                             <button type="submit" class="btn btn-link nav-link text-dark">Logout</button>
@@ -54,6 +193,8 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Vuelos" asp-action="Index">Vuelos</a>
                     </li>
+                    
+                    
                 }
                 else
                 {

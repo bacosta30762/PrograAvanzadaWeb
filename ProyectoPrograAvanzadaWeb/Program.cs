@@ -6,6 +6,7 @@ using ProyectoPrograAvanzadaWeb.Models;
 using ProyectoPrograAvanzadaWeb.Seeder;
 using ProyectoPrograAvanzadaWeb.Services;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using ProyectoPrograAvanzadaWeb.Alertas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,9 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 builder.Services.AddDbContext<PrograContext>(op =>
     op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSignalR();
+
 
 builder.Services.AddIdentity<Usuario, Role>(options =>
 {
@@ -39,6 +43,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.MapHub<AlertasHub>("/alertasHub");
+
 
 app.UseRouting();
 app.UseAuthentication();
