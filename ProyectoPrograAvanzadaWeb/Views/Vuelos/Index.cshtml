@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Vuelo>
 @{
     var pagination = ViewData["Pagination"] as Pagination;
+    var aeropuertos = ViewData["Aeropuertos"] as IEnumerable<Aeropuerto>;
 }
 
 <div class="container mt-4">
@@ -8,10 +9,22 @@
 
     <form method="get" class="row g-3">
         <div class="col-md-3">
-            <input type="text" name="origen" class="form-control" placeholder="Código IATA Origen" />
+            <select name="origen" class="form-select">
+                <option value="">Seleccione Origen</option>
+                @foreach (var aeropuerto in aeropuertos ?? [])
+                {
+                    <option value="@aeropuerto.IATA">@aeropuerto.IATA - @aeropuerto.Ciudad</option>
+                }
+            </select>
         </div>
         <div class="col-md-3">
-            <input type="text" name="destino" class="form-control" placeholder="Código IATA Destino" />
+            <select name="destino" class="form-select">
+                <option value="">Seleccione Destino</option>
+                @foreach (var aeropuerto in aeropuertos ?? [])
+                {
+                    <option value="@aeropuerto.IATA">@aeropuerto.IATA - @aeropuerto.Ciudad</option>
+                }
+            </select>
         </div>
         <div class="col-md-3">
             <input type="text" name="aerolinea" class="form-control" placeholder="Aerolínea" />
@@ -61,4 +74,3 @@
     </div>
 </div>
 <p>Mostrando @pagination.Count de @pagination.Total vuelos.</p>
-

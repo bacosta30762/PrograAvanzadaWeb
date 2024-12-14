@@ -9,5 +9,7 @@ namespace ProyectoPrograAvanzadaWeb.Models
         public PrograContext(DbContextOptions<PrograContext> options) : base(options)
         {
         }
+        public DbSet<Aeropuerto> Aeropuertos { get; set; }
     }
+    
 }

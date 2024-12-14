@@ -12,8 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<FlightService>();
-builder.Services.AddTransient<IEnviadorCorreos, EnviadorCorreos>();
-builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 builder.Services.AddDbContext<PrograContext>(op =>
@@ -29,7 +27,10 @@ builder.Services.AddIdentity<Usuario, Role>(options =>
     .AddEntityFrameworkStores<PrograContext>()
     .AddDefaultTokenProviders();
 
-
+// Services
+builder.Services.AddTransient<IEnviadorCorreos, EnviadorCorreos>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IAeropuertoService, AeropuertoService>();
 
 var app = builder.Build();
 
