@@ -41,6 +41,9 @@
         <div class="col-12">
             <button type="submit" class="btn btn-primary w-100">Buscar</button>
         </div>
+        <div class="mt-4">
+            <button id="downloadPdf" class="btn btn-secondary">Descargar PDF</button>
+        </div>
     </form>
 
     <div class="table-responsive mt-4">
@@ -74,3 +77,11 @@
     </div>
 </div>
 <p>Mostrando @pagination.Count de @pagination.Total vuelos.</p>
+
+<script>
+    document.getElementById('downloadPdf').addEventListener('click', function (e) {
+        e.preventDefault();
+        const params = new URLSearchParams(window.location.search); // Obtener filtros actuales
+        window.location.href = `/Vuelos/DescargarPDF?${params}`; // Redirigir para descargar el PDF
+    });
+</script>

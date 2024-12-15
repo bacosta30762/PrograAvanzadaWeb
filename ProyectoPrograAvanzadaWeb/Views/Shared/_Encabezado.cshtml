@@ -151,6 +151,7 @@
             <div class="navbar-nav ms-auto py-0">
                 @if (User.Identity.IsAuthenticated)
                 {
+                    <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link dropdown-toggle"
                                 id="notificationDropdownButton"
@@ -174,19 +175,16 @@
 
                         </div>
                     </li>
+                    </ul>
                 }
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                </li>
+               
                 
 
                 @if (User.Identity.IsAuthenticated)
                 {
-                    
+                    <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <form asp-controller="Usuario" asp-action="Logout" method="post" class="form-inline">
-                            <button type="submit" class="btn btn-link nav-link text-dark">Logout</button>
-                        </form>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Vuelos" asp-action="Index">Vuelos</a>
@@ -197,18 +195,27 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Aeropuerto" asp-action="Index">Aeropuertos</a>
                         </li>
                     }
+                    <li class="nav-item">
+                        <form asp-controller="Usuario" asp-action="Logout" method="post" class="form-inline">
+                            <button type="submit" class="btn btn-link nav-link text-dark">Cerrar Sesión</button>
+                        </form>
+                    </li>
+                    </ul>
                 }
                 else
                 {
+                    <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Login">Login</a>
+                        <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Login">Inicio de Sesión</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Register">Register</a>
+                        <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Register">Registrar</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="RecuperarPassword">Recuperar Contraseña</a>
                     </li>
+                    </ul>
+
                 }
             </div>
         </div>
