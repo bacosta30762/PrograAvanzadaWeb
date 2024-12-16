@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProyectoPrograAvanzadaWeb.Models;
 using ProyectoPrograAvanzadaWeb.Services;
 
@@ -43,6 +44,8 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
             }
             return View(aeropuerto);
         }
+
+
         [HttpPost]
         public async Task<IActionResult> EditAsync(Aeropuerto aeropuerto)
         {
@@ -50,14 +53,44 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
             {
                 return View(aeropuerto);
             }
-            await _aeropuertoService.UpdateAeropuerto(aeropuerto);
-            return RedirectToAction("Index");
+
+            try
+            {
+                await _aeropuertoService.UpdateAeropuerto(aeropuerto);
+
+                // Asignar mensaje de éxito
+                TempData["SuccessMessage"] = "El aeropuerto se ha actualizado con éxito.";
+
+                return RedirectToAction("Edit", new { id = aeropuerto.Id }); // Redirigir a la misma vista
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(aeropuerto);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Ocurrió un error inesperado.");
+                return View(aeropuerto);
+            }
         }
+
+
         public async Task<IActionResult> Delete(int id)
         {
             await _aeropuertoService.DeleteAeropuerto(id);
+            TempData["SuccessMessage"] = "El aeropuerto se ha eliminado con éxito.";
             return RedirectToAction("Index");
         }
-        
+        public async Task<IActionResult> Details(int id)
+        {
+            var aeropuerto = await _aeropuertoService.GetAeropuerto(id);
+            if (aeropuerto == null)
+            {
+                return NotFound();
+            }
+            return View(aeropuerto);
+        }
+
     }
 }

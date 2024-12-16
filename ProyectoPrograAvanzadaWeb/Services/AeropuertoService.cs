@@ -27,10 +27,24 @@ namespace ProyectoPrograAvanzadaWeb.Services
         }
         public async Task<Aeropuerto> UpdateAeropuerto(Aeropuerto aeropuerto)
         {
-            _context.Entry(aeropuerto).State = EntityState.Modified;
+            // Buscar la entidad existente en la base de datos
+            var existingAeropuerto = await _context.Aeropuertos.FirstOrDefaultAsync(x => x.Id == aeropuerto.Id);
+            if (existingAeropuerto == null)
+            {
+                throw new InvalidOperationException("El aeropuerto no existe en la base de datos.");
+            }
+
+            // Actualizar propiedades manualmente
+            existingAeropuerto.IATA = aeropuerto.IATA;
+            existingAeropuerto.Nombre = aeropuerto.Nombre;
+            existingAeropuerto.Ciudad = aeropuerto.Ciudad;
+            existingAeropuerto.Pais = aeropuerto.Pais;
+
+            // Guardar cambios
             await _context.SaveChangesAsync();
-            return aeropuerto;
+            return existingAeropuerto;
         }
+
         public async Task<Aeropuerto?> DeleteAeropuerto(int id)
         {
 
@@ -43,6 +57,7 @@ namespace ProyectoPrograAvanzadaWeb.Services
             await _context.SaveChangesAsync();
             return aeropuerto;
         }
+        
 
     }
 

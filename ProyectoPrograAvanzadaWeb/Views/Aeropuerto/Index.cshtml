@@ -1,59 +1,62 @@
 ﻿@model IEnumerable<ProyectoPrograAvanzadaWeb.Models.Aeropuerto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Aeropuertos";
 }
 
-<h1>Index</h1>
+<h1>Lista de Aeropuertos</h1>
+
+<!-- Mostrar mensaje de éxito solo si TempData contiene el valor -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Agregar Nuevo Aeropuerto</a>
 </p>
-<table class="table">
+
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IATA)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ciudad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pais)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.IATA)</th>
+            <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+            <th>@Html.DisplayNameFor(model => model.Ciudad)</th>
+            <th>@Html.DisplayNameFor(model => model.Pais)</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IATA)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ciudad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pais)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id= item.Id  }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.IATA)</td>
+                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Ciudad)</td>
+                <td>@Html.DisplayFor(modelItem => item.Pais)</td>                
+                <td>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <!-- Botón Editar -->
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                        <span>|</span>
+
+                        <!-- Botón Detalles -->
+                        <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                        <span>|</span>
+
+                        <!-- Botón Eliminar con confirmación -->
+                        <a asp-action="Delete" asp-route-id="@item.Id"
+                           onclick="return confirm('¿Está seguro de que desea eliminar este aeropuerto?');">
+                            Eliminar
+                        </a>
+                    </div>
+                </td>               
+            </tr>
+        }
     </tbody>
 </table>
