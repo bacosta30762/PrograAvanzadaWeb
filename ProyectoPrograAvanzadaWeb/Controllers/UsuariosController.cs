@@ -81,11 +81,9 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
         }
 
         // POST: Usuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Cedula,Nombre,Apellidos,Activo,Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")] Usuario usuario)
+        public async Task<IActionResult> Edit(string id, [Bind("Cedula,Nombre,Apellidos,Activo,Id")] Usuario usuario)
         {
             if (id != usuario.Id)
             {
@@ -94,20 +92,52 @@ namespace ProyectoPrograAvanzadaWeb.Controllers
 
             if (ModelState.IsValid)
             {
+                // Declarar usuarioExistente fuera del try-catch
+                Usuario usuarioExistente = null;
+
                 try
                 {
-                    _context.Update(usuario);
+                    // Cargar el usuario existente desde la base de datos
+                    usuarioExistente = await _context.Users.FindAsync(usuario.Id);
+
+                    if (usuarioExistente == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Actualizar las propiedades necesarias
+                    usuarioExistente.Cedula = usuario.Cedula;
+                    usuarioExistente.Nombre = usuario.Nombre;
+                    usuarioExistente.Apellidos = usuario.Apellidos;
+                    usuarioExistente.Activo = usuario.Activo;
+
+                    // Guardar los cambios
+                    _context.Update(usuarioExistente);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    // Verificar si el usuario sigue existiendo en la base de datos
                     if (!UsuarioExists(usuario.Id))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;
+                        // Manejar cambios concurrentes regenerando el ConcurrencyStamp
+                        var databaseEntry = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == usuario.Id);
+
+                        if (databaseEntry == null)
+                        {
+                            return NotFound();
+                        }
+
+                        // Sobrescribir el ConcurrencyStamp del usuario existente
+                        usuarioExistente.ConcurrencyStamp = databaseEntry.ConcurrencyStamp;
+
+                        // Intentar guardar de nuevo
+                        _context.Update(usuarioExistente);
+                        await _context.SaveChangesAsync();
                     }
                 }
                 return RedirectToAction(nameof(Index));
